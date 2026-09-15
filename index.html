@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Tile_store 瓷砖选材空间，精选墙地砖、岩板与整屋搭配灵感。" />
+    <title>Tile_store | 让每一面，都有答案</title>
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Tile_store 首页">
+        <span class="brand-mark">TS</span>
+        <span>Tile_store</span>
+      </a>
+      <nav class="main-nav" aria-label="主导航">
+        <a href="#collections">产品系列</a>
+        <a href="#inspiration">空间灵感</a>
+        <a href="#service">选材服务</a>
+        <a href="#visit">到店咨询</a>
+      </nav>
+      <button class="header-cta" data-open-booking>预约选材 <span aria-hidden="true">↗</span></button>
+      <button class="menu-toggle" aria-label="打开菜单" aria-expanded="false">菜单</button>
+    </header>
+
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">TILE / MATERIAL / HOME</p>
+          <h1>让每一面<br /><em>都有答案</em></h1>
+          <p class="hero-text">从一块砖开始，把光线、尺度和生活习惯，变成真正适合你的家。</p>
+          <div class="hero-actions">
+            <a class="button button-dark" href="#collections">开始选砖 <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#inspiration">先看空间灵感 <span aria-hidden="true">→</span></a>
+          </div>
+          <div class="hero-note"><span class="note-line"></span><span>本地现货 · 7天内可预约上门</span></div>
+        </div>
+        <div class="hero-visual">
+          <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=85" alt="自然光照进铺设浅灰瓷砖的客厅" />
+          <div class="image-caption"><span>01</span><span>Soft Mineral / 客厅应用</span></div>
+          <div class="floating-swatch" aria-label="当前材质：雾灰石纹">
+            <span class="swatch swatch-stone"></span>
+            <span><b>雾灰石纹</b><small>MAT-042 / 哑光</small></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="quick-find section-shell" aria-label="快速选砖入口">
+        <div class="quick-intro"><span class="section-index">01</span><p>先从你的空间<br />开始</p></div>
+        <div class="quick-options">
+          <button class="quick-option is-active" data-filter="all"><span>全部</span><small>120+ 款现货</small></button>
+          <button class="quick-option" data-filter="floor"><span>地面</span><small>耐磨好打理</small></button>
+          <button class="quick-option" data-filter="wall"><span>墙面</span><small>光线更柔和</small></button>
+          <button class="quick-option" data-filter="slab"><span>岩板</span><small>一体化大规格</small></button>
+        </div>
+        <a class="round-arrow" href="#collections" aria-label="查看全部产品">↘</a>
+      </section>
+
+      <section class="collections section-shell" id="collections">
+        <div class="section-heading">
+          <div><p class="eyebrow">COLLECTIONS</p><h2>为真实生活<br /><em>挑一块好砖</em></h2></div>
+          <p class="heading-description">不只看颜色。我们把触感、耐用度和铺贴效果都放进每一次选择里。</p>
+        </div>
+        <div class="collection-grid">
+          <article class="collection-card collection-large">
+            <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=85" alt="暖灰色大规格瓷砖的开放式厨房" />
+            <div class="card-overlay"><span>01 / 大规格</span><h3>把空间拉开</h3><a href="#products" data-filter-link="slab">查看系列 ↗</a></div>
+          </article>
+          <article class="collection-card collection-tall">
+            <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85" alt="细腻纹理的浴室墙砖" />
+            <div class="card-overlay"><span>02 / 墙面</span><h3>让光线停留</h3><a href="#products" data-filter-link="wall">查看系列 ↗</a></div>
+          </article>
+          <article class="collection-card collection-small">
+            <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1000&q=85" alt="木纹砖铺设的温暖卧室" />
+            <div class="card-overlay"><span>03 / 木纹</span><h3>脚下有温度</h3><a href="#products" data-filter-link="floor">查看系列 ↗</a></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="products section-shell" id="products">
+        <div class="products-top"><div><p class="eyebrow">JUST IN</p><h2>本周精选</h2></div><a class="text-link" href="#products">查看全部产品 <span aria-hidden="true">→</span></a></div>
+        <div class="product-filters" role="tablist" aria-label="产品筛选">
+          <button class="filter-tab is-active" data-filter="all" role="tab" aria-selected="true">全部</button>
+          <button class="filter-tab" data-filter="floor" role="tab" aria-selected="false">地面砖</button>
+          <button class="filter-tab" data-filter="wall" role="tab" aria-selected="false">墙面砖</button>
+          <button class="filter-tab" data-filter="slab" role="tab" aria-selected="false">岩板</button>
+        </div>
+        <div class="product-grid">
+          <article class="product-card" data-category="floor">
+            <div class="product-image"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=800&q=85" alt="雾灰石纹地砖样品" /><button class="favorite" aria-label="收藏雾灰石纹">♡</button><span class="product-tag">热卖</span></div>
+            <div class="product-info"><div><h3>雾灰石纹</h3><p>MAT-042 · 600×1200mm</p></div><strong>¥ 128<span>/㎡</span></strong></div>
+          </article>
+          <article class="product-card" data-category="wall">
+            <div class="product-image"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=85" alt="奶油白微水泥墙砖样品" /><button class="favorite" aria-label="收藏奶油白微水泥">♡</button></div>
+            <div class="product-info"><div><h3>奶油白微水泥</h3><p>WAL-018 · 750×1500mm</p></div><strong>¥ 156<span>/㎡</span></strong></div>
+          </article>
+          <article class="product-card" data-category="slab">
+            <div class="product-image"><img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800&q=85" alt="墨岩黑大板样品" /><button class="favorite" aria-label="收藏墨岩黑大板">♡</button><span class="product-tag product-tag-dark">新品</span></div>
+            <div class="product-info"><div><h3>墨岩黑大板</h3><p>SLB-007 · 900×1800mm</p></div><strong>¥ 298<span>/㎡</span></strong></div>
+          </article>
+          <article class="product-card" data-category="floor">
+            <div class="product-image"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=85" alt="原木浅棕木纹砖样品" /><button class="favorite" aria-label="收藏原木浅棕">♡</button></div>
+            <div class="product-info"><div><h3>原木浅棕</h3><p>WD-031 · 200×1200mm</p></div><strong>¥ 96<span>/㎡</span></strong></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="inspiration section-shell" id="inspiration">
+        <div class="inspiration-image"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=85" alt="大面积落地窗旁的现代客餐厅" /></div>
+        <div class="inspiration-copy"><p class="eyebrow">SPACE NOTES / 07</p><h2>留白不是空，<br /><em>是给生活的余地。</em></h2><p>同一块砖，在不同的光线和尺度下，会有完全不同的表情。我们记录真实住家的搭配，帮你找到喜欢的答案。</p><a class="button button-light" href="#service">看更多案例 <span aria-hidden="true">↗</span></a></div>
+      </section>
+
+      <section class="service section-shell" id="service">
+        <div class="service-heading"><p class="eyebrow">HOW WE HELP</p><h2>选砖这件事，<br /><em>有人一起更轻松。</em></h2></div>
+        <div class="service-list">
+          <div class="service-item"><span>01</span><div><h3>带着户型来</h3><p>线上先沟通采光、面积和预算，减少无效试错。</p></div><span class="service-arrow">↗</span></div>
+          <div class="service-item"><span>02</span><div><h3>现场看真实样板</h3><p>门店有完整铺贴墙，直接比较尺寸、纹理和光泽。</p></div><span class="service-arrow">↗</span></div>
+          <div class="service-item"><span>03</span><div><h3>一套方案带回家</h3><p>出具用量清单和搭配建议，施工对接更清楚。</p></div><span class="service-arrow">↗</span></div>
+        </div>
+      </section>
+
+      <section class="visit section-shell" id="visit">
+        <div class="visit-inner"><div><p class="eyebrow">COME BY</p><h2>来店里，<br /><em>把喜欢摸清楚。</em></h2><p>周一至周日 09:00 - 18:00<br />杭州市拱墅区 · 预约后发送详细地址</p></div><button class="button button-dark" data-open-booking>预约到店时间 <span aria-hidden="true">↗</span></button></div>
+      </section>
+    </main>
+
+    <footer class="site-footer section-shell"><div class="footer-brand"><span class="brand-mark">TS</span><span>Tile_store</span></div><p>把材料，变成家的语气。</p><div class="footer-links"><a href="#collections">产品系列</a><a href="#service">选材服务</a><a href="#visit">到店咨询</a></div><small>© 2026 Tile_store. All rights reserved.</small></footer>
+
+    <div class="modal-backdrop" data-modal hidden>
+      <div class="booking-modal" role="dialog" aria-modal="true" aria-labelledby="booking-title"><button class="modal-close" data-close-booking aria-label="关闭预约窗口">×</button><p class="eyebrow">BOOK A VISIT</p><h2 id="booking-title">预约一次轻松的<br /><em>选材时间。</em></h2><form id="booking-form"><label>你的称呼<input required name="name" placeholder="怎么称呼你" /></label><label>联系电话<input required name="phone" type="tel" placeholder="方便联系你的号码" /></label><label>希望到店时间<select name="time"><option>工作日白天</option><option>工作日晚上</option><option>周末上午</option><option>周末下午</option></select></label><button class="button button-dark" type="submit">提交预约 <span aria-hidden="true">↗</span></button><p class="form-message" aria-live="polite"></p></form></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
