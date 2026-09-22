@@ -90,3 +90,5 @@ Netlify 只负责发布前端静态文件；Spring Boot 和 MySQL 仍需要部�
 - 本地开发仍可使用 `DB_USERNAME` 和 `DB_PASSWORD` 环境变量。
 
 Railway 部署时需要先创建 MySQL 服务，再把这些数据库变量注入 Java 服务。数据库表仍要通过 Railway 提供的 MySQL 连接执行 `database/setup.sql`；不要把本机的数据库密码提交到 Gitee。
+
+Railway 的数据库初始化使用 `database/setup-railway.sql`：连接到 Railway 提供的目标数据库后直接执行这个文件。
