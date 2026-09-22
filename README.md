@@ -79,3 +79,14 @@ Vue 前端通过环境变量 `VITE_API_BASE_URL` 连接后端：
 - 后端服务器还要设置 `FRONTEND_ORIGINS`，值为你的 Netlify 网站地址，例如 `https://your-site.netlify.app`。
 
 Netlify 只负责发布前端静态文件；Spring Boot 和 MySQL 仍需要部署到可以被公网访问的服务器。
+
+## Railway 部署准备
+
+当前后端已经支持 Railway：
+
+- `backend/Dockerfile` 会用 Java 17 和 Maven 构建后端。
+- 端口从 Railway 的 `PORT` 环境变量读取。
+- 数据库连接支持 Railway MySQL 的 `MYSQLHOST`、`MYSQLPORT`、`MYSQLDATABASE`、`MYSQLUSER`、`MYSQLPASSWORD`。
+- 本地开发仍可使用 `DB_USERNAME` 和 `DB_PASSWORD` 环境变量。
+
+Railway 部署时需要先创建 MySQL 服务，再把这些数据库变量注入 Java 服务。数据库表仍要通过 Railway 提供的 MySQL 连接执行 `database/setup.sql`；不要把本机的数据库密码提交到 Gitee。
