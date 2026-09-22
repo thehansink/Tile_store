@@ -1,6 +1,9 @@
 server:
   port: 8080
 
+app:
+  frontend-origins: ${FRONTEND_ORIGINS:http://localhost:*,http://127.0.0.1:*}
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/tile_store?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai

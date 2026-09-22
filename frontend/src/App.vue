@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const apiUrl = (path) => `${API_BASE_URL}${path}`;
+
 const products = ref([]);
 const loading = ref(true);
 const error = ref('');
@@ -10,14 +13,14 @@ const orderMessage = ref('');
 const orderForm = ref({ receiverName: '', receiverPhone: '', shippingAddress: '', paymentMethod: 'WECHAT_PAY' });
 
 async function loadCart() {
-  const response = await fetch('/api/cart?cartKey=demo-user');
+  const response = await fetch(apiUrl('/api/cart?cartKey=demo-user'));
   if (!response.ok) throw new Error('购物车读取失败');
   cart.value = await response.json();
 }
 
 async function addToCart(product) {
   cartMessage.value = '';
-  const response = await fetch('/api/cart?cartKey=demo-user', {
+  const response = await fetch(apiUrl('/api/cart?cartKey=demo-user'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ productId: product.id, quantity: 1 })
@@ -29,7 +32,7 @@ async function addToCart(product) {
 
 async function changeQuantity(item, quantity) {
   if (quantity < 1) return;
-  const response = await fetch(`/api/cart/${item.product.id}?cartKey=demo-user`, {
+  const response = await fetch(apiUrl(`/api/cart/${item.product.id}?cartKey=demo-user`), {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ quantity })
@@ -41,7 +44,7 @@ const cartTotal = () => cart.value.reduce((sum, item) => sum + Number(item.produ
 
 async function createOrder() {
   orderMessage.value = '';
-  const response = await fetch('/api/orders?cartKey=demo-user', {
+  const response = await fetch(apiUrl('/api/orders?cartKey=demo-user'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(orderForm.value)
@@ -54,7 +57,7 @@ async function createOrder() {
 
 onMounted(async () => {
   try {
-    const response = await fetch('/api/products');
+    const response = await fetch(apiUrl('/api/products'));
     if (!response.ok) throw new Error('商品接口暂时不可用');
     products.value = await response.json();
     await loadCart();

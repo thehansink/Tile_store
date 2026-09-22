@@ -68,3 +68,14 @@ git push -u origin master
 ## 重要说明
 
 当前手机号验证码和支付页面是前端演示功能：验证码不会真的发到手机，支付也不会真的扣款。正式经营前，需要接入短信服务、订单数据库和微信支付或支付宝官方接口，并在服务器端校验订单金额。
+
+## Netlify 与后端地址
+
+Vue 前端通过环境变量 `VITE_API_BASE_URL` 连接后端：
+
+- 本地开发时保持为空，Vite 会代理到 `http://localhost:8080`。
+- 部署到 Netlify 时，在网站设置的 Environment variables 中填写后端公网地址，例如 `https://api.example.com`。
+- 修改环境变量后需要重新部署一次前端。
+- 后端服务器还要设置 `FRONTEND_ORIGINS`，值为你的 Netlify 网站地址，例如 `https://your-site.netlify.app`。
+
+Netlify 只负责发布前端静态文件；Spring Boot 和 MySQL 仍需要部署到可以被公网访问的服务器。
