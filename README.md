@@ -1,94 +1,99 @@
-# Tile_store 瓷砖商店网站
+# Tile Store 瓷砖商城
 
-这是一个不需要安装框架的静态网站，适合先在 Gitee 上发布第一版。
+Tile Store 是一个通用风格的瓷砖选购网站，面向需要挑选地面砖、墙面砖和岩板的用户。当前页面重点展示瓷砖纹理、分类筛选、购物袋、订单填写和手机号登录入口。
 
-## 第一步：在电脑上打开
+## 当前页面
 
-1. 打开 PowerShell。
-2. 输入：
+- 深色材料展厅风格的首页
+- 首屏瓷砖材质展示和选砖入口
+- 首屏瓷砖样片轮播图，支持自动播放、左右切换和圆点导航
+- 地面砖、墙面砖、岩板分类筛选
+- 瓷砖商品卡片和加入购物袋
+- 购物袋侧边栏、数量调整和订单填写
+- 手机号登录 / 注册界面，带验证码倒计时
+- 后端不可用时，仍可用本地精选商品和本地购物袋预览页面
+- 页面图片使用 `frontend/public/tiles/` 中的瓷砖纹理素材
 
-   ```powershell
-   cd D:\work\Tile_store
-   python -m http.server 4173
-   ```
+## 本地启动前端
 
-3. 打开浏览器访问 <http://127.0.0.1:4173>。
-4. 关闭网站时，回到 PowerShell 按 `Ctrl + C`。
-
-如果电脑提示找不到 Python，可以先从 <https://www.python.org/downloads/> 安装 Python，安装页面要勾选 `Add Python to PATH`。
-
-## 第二步：修改网站内容
-
-- 页面文字和图片地址：编辑 `index.html`
-- 颜色、字体、排版：编辑 `styles.css`
-- 产品筛选、收藏和预约弹窗：编辑 `script.js`
-
-最常改的是 `index.html` 里的产品名称、价格、门店地址和图片 `src` 地址。图片建议使用自己的门店照片，替换时保留完整的 `https://...` 地址即可。
-
-## 第三步：上传到 Gitee
-
-### 方式 A：用 Gitee 网页上传（最适合新手）
-
-1. 登录 Gitee，打开你创建的 `Tile_store` 仓库。
-2. 点击“上传文件”。
-3. 把 `index.html`、`styles.css`、`script.js`、`README.md` 四个文件一起拖进去。
-4. 在页面下方填写提交说明，例如“完成瓷砖商店首页”。
-5. 点击“提交文件”。
-
-### 方式 B：用 Git 命令上传
-
-在项目文件夹打开 PowerShell，逐行执行：
+在 PowerShell 中执行：
 
 ```powershell
-git init
-git add .
-git commit -m "完成瓷砖商店首页"
-git branch -M master
-git remote add origin 你的Gitee仓库地址
-git push -u origin master
+cd D:\work\Tile_store\frontend
+npm install
+npm run dev
 ```
 
-把最后一行里的 `你的Gitee仓库地址` 换成 Gitee 仓库页面复制的 HTTPS 地址。
+浏览器打开：<http://127.0.0.1:5173>
 
-## 第四步：让别人能访问
+生成上线文件：
 
-在 Gitee 仓库的“服务”或“Pages”里开启 Gitee Pages，分支选择 `master`，目录选择根目录，然后点击部署。部署完成后，Gitee 会给你一个公开网址。
+```powershell
+npm run build
+```
 
-## 当前已完成的功能
+构建结果在 `frontend/dist/`。
 
-- 响应式首页，支持手机和电脑
-- 产品系列入口和产品筛选
-- 产品收藏按钮
-- 到店预约弹窗和提交成功提示
-- 真实空间图片和产品展示
-- 手机号登录 / 注册界面（演示验证码：`123456`）
-- 产品加入购物车、数量调整和订单结算界面
-- 微信支付、支付宝、到店付款选项（仅演示，不会真实扣款）
+## 前后端地址
 
-## 重要说明
+前端通过 `VITE_API_BASE_URL` 连接 Java 后端。
 
-当前手机号验证码和支付页面是前端演示功能：验证码不会真的发到手机，支付也不会真的扣款。正式经营前，需要接入短信服务、订单数据库和微信支付或支付宝官方接口，并在服务器端校验订单金额。
+- 本地开发留空，Vite 会把 `/api` 请求代理到 `http://localhost:8080`
+- 部署到 Netlify 时，填写后端公网地址，例如 `https://api.example.com`
+- 修改环境变量后，需要重新构建和部署前端
+- 后端需要把 `FRONTEND_ORIGINS` 设置为前端网站地址
 
-## Netlify 与后端地址
+示例文件是 [frontend/.env.example](frontend/.env.example)。
 
-Vue 前端通过环境变量 `VITE_API_BASE_URL` 连接后端：
+## 项目目录
 
-- 本地开发时保持为空，Vite 会代理到 `http://localhost:8080`。
-- 部署到 Netlify 时，在网站设置的 Environment variables 中填写后端公网地址，例如 `https://api.example.com`。
-- 修改环境变量后需要重新部署一次前端。
-- 后端服务器还要设置 `FRONTEND_ORIGINS`，值为你的 Netlify 网站地址，例如 `https://your-site.netlify.app`。
+```text
+frontend/                 Vue 3 + Vite 前端
+frontend/src/App.vue      首页、商品、购物袋、登录交互
+frontend/src/styles.css   页面颜色、排版和响应式样式
+frontend/public/tiles/    瓷砖图片素材
+backend/                  Java Spring Boot 后端
+database/                 MySQL 初始化脚本
+PRODUCT.md                产品定位和界面约束
+```
 
-Netlify 只负责发布前端静态文件；Spring Boot 和 MySQL 仍需要部署到可以被公网访问的服务器。
+## 当前接口状态
 
-## Railway 部署准备
+已经接入的后端接口：
 
-当前后端已经支持 Railway：
+- `GET /api/products` 商品列表
+- `GET /api/cart?cartKey=...` 读取购物袋
+- `POST /api/cart?cartKey=...` 加入商品
+- `PUT /api/cart/{productId}?cartKey=...` 修改数量
+- `DELETE /api/cart/{productId}?cartKey=...` 删除商品
+- `POST /api/orders?cartKey=...` 创建订单
 
-- `backend/Dockerfile` 会用 Java 17 和 Maven 构建后端。
-- 端口从 Railway 的 `PORT` 环境变量读取。
-- 数据库连接支持 Railway MySQL 的 `MYSQLHOST`、`MYSQLPORT`、`MYSQLDATABASE`、`MYSQLUSER`、`MYSQLPASSWORD`。
-- 本地开发仍可使用 `DB_USERNAME` 和 `DB_PASSWORD` 环境变量。
+手机号登录界面目前是前端演示功能：验证码不会真的发送到手机，登录状态只保存在浏览器本地。正式使用时，还需要后端增加用户表、发送验证码接口、验证码校验和登录令牌。
 
-Railway 部署时需要先创建 MySQL 服务，再把这些数据库变量注入 Java 服务。数据库表仍要通过 Railway 提供的 MySQL 连接执行 `database/setup.sql`；不要把本机的数据库密码提交到 Gitee。
+订单页面目前只记录订单信息，不会真实扣款。接入微信支付或支付宝前，需要先在服务端校验订单金额，并使用官方支付接口。
 
-Railway 的数据库初始化使用 `database/setup-railway.sql`：连接到 Railway 提供的目标数据库后直接执行这个文件。
+## 数据库初始化
+
+- 本地数据库使用 [database/setup.sql](database/setup.sql)
+- Railway MySQL 使用 [database/setup-railway.sql](database/setup-railway.sql)
+- 数据库脚本中的商品图片现在使用瓷砖纹理素材地址
+- 不要把数据库密码、短信密钥或支付密钥提交到 GitHub 或 Gitee
+
+## 发布到 GitHub 和 Gitee
+
+```powershell
+cd D:\work\Tile_store
+git add .
+git commit -m "优化瓷砖商城界面"
+git push github master
+git push origin master
+```
+
+仓库地址：
+
+- GitHub：<https://github.com/thehansink/Tile_store>
+- Gitee：<https://gitee.com/AKAThehan/Tile_store>
+
+## 图片替换
+
+将自有的瓷砖产品图放进 `frontend/public/tiles/`，然后在 [frontend/src/App.vue](frontend/src/App.vue) 的 `tileImages` 中更新文件名。建议使用同一背景、同一光线和相近尺寸拍摄，商品陈列会更统一。
