@@ -1,15 +1,15 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const apiUrl = (path) => `${API_BASE_URL}${path}`;
 
 const tileImages = {
-  mist: '/tiles/mist-grey.jpg',
-  cream: '/tiles/cream-white.jpg',
-  terracotta: '/tiles/terracotta.jpg',
-  blueGrey: '/tiles/blue-grey.jpg',
-  marble: '/tiles/charcoal-wall.jpg'
+  mist: '/tiles/catalog/007b0ab2d6654d5a033f3667f1ae4f64.jpg',
+  cream: '/tiles/catalog/0b0e09f43ad26bb35e158a45c6212761.jpg',
+  terracotta: '/tiles/catalog/0e61d33ed68c584ec2d3f21b56038f61.jpg',
+  blueGrey: '/tiles/catalog/516ff1495a194af0486a4b67227478db.jpg',
+  marble: '/tiles/catalog/26955489c0b976d96d467241bf10e473.jpg'
 };
 const tileImageByName = {
   '雾灰石纹': tileImages.mist,
@@ -24,9 +24,9 @@ const fallbackProducts = [
   { id: 4, name: '原木浅棕', category: 'floor', price: 96, unit: '㎡', specification: 'WD-031 · 200×1200mm', imageUrl: tileImages.terracotta }
 ];
 const carouselSlides = [
-  { name: '墨岩黑大板', spec: '900 × 1800 mm', label: '深色哑光', image: tileImages.marble, alt: '深色哑光瓷砖样片' },
-  { name: '雾灰石纹', spec: '600 × 1200 mm', label: '细腻石纹', image: tileImages.mist, alt: '雾灰石纹瓷砖样片' },
-  { name: '奶油白微水泥', spec: '750 × 1500 mm', label: '柔和肌理', image: tileImages.cream, alt: '奶油白瓷砖样片' }
+  { name: '现场看样', spec: '展厅实拍 · 现场光线', label: '真实动线', video: '/videos/showroom-02.mp4', poster: tileImages.mist, alt: '瓷砖展厅现场视频' },
+  { name: '暖色纹理', spec: '样板墙 · 近距离观察', label: '温润质感', video: '/videos/showroom-03.mp4', poster: tileImages.terracotta, alt: '暖色瓷砖样板墙视频' },
+  { name: '展厅细节', spec: '大板陈列 · 实拍画面', label: '清晰看样', video: '/videos/showroom-04.mp4', poster: tileImages.cream, alt: '瓷砖展厅样板视频' }
 ];
 
 const categoryLabels = { floor: '地面砖', wall: '墙面砖', slab: '岩板' };
@@ -56,6 +56,7 @@ const loginMessage = ref('');
 const currentSlide = ref(0);
 let countdownTimer;
 let carouselTimer;
+const videoRefs = ref([]);
 
 const filteredProducts = computed(() => activeCategory.value === '全部'
   ? products.value
@@ -220,14 +221,30 @@ function previousSlide() {
   currentSlide.value = (currentSlide.value - 1 + carouselSlides.length) % carouselSlides.length;
 }
 
+function setVideoRef(element, index) {
+  if (element) videoRefs.value[index] = element;
+}
+
+function syncCarouselVideos() {
+  videoRefs.value.forEach((video, index) => {
+    if (!video) return;
+    if (index === currentSlide.value) video.play().catch(() => {});
+    else video.pause();
+  });
+}
+
 function startCarousel() {
   window.clearInterval(carouselTimer);
   carouselTimer = window.setInterval(nextSlide, 5000);
+  nextTick(syncCarouselVideos);
 }
 
 function stopCarousel() {
   window.clearInterval(carouselTimer);
+  videoRefs.value[currentSlide.value]?.pause();
 }
+
+watch(currentSlide, () => nextTick(syncCarouselVideos));
 
 onMounted(async () => {
   isLoggedIn.value = Boolean(localStorage.getItem('tile-store-phone'));
@@ -242,6 +259,7 @@ onMounted(async () => {
     await loadCart();
     loading.value = false;
     startCarousel();
+    nextTick(syncCarouselVideos);
   }
 });
 
@@ -259,7 +277,7 @@ onUnmounted(() => {
       <div class="header-actions"><button class="text-button" type="button" @click="isLoggedIn ? logout() : openLogin()">{{ isLoggedIn ? userPhone : '登录' }}</button><button class="bag-button" type="button" aria-label="打开购物袋" @click="cartOpen = true"><span class="bag-icon" aria-hidden="true"></span><span>购物袋</span><b v-if="cartCount">{{ cartCount }}</b></button></div>
     </header>
 
-    <section id="top" class="hero-section"><div class="hero-copy"><p class="hero-kicker">把纹理看清楚</p><h1>好瓷砖<br /><em>值得慢慢挑</em></h1><p class="hero-description">从柔和的雾灰，到温润的奶油白，先看清颜色、触感和纹理，再决定哪一块适合你的空间</p><div class="hero-actions"><a class="primary-button" href="#collection">开始选砖 <span aria-hidden="true">↗</span></a><a class="secondary-link" href="#service">了解选砖服务</a></div><div class="hero-notes"><span><b>01</b>真实纹理</span><span><b>02</b>小样先看</span><span><b>03</b>按需搭配</span></div></div><div class="hero-visual" @mouseenter="stopCarousel" @mouseleave="startCarousel"><div class="carousel-frame" aria-live="polite"><img v-for="(slide, index) in carouselSlides" :key="slide.name" class="carousel-image" :class="{ active: index === currentSlide }" :src="slide.image" :alt="slide.alt" /></div><div class="hero-tag"><span>{{ carouselSlides[currentSlide].label }}</span><strong>{{ carouselSlides[currentSlide].name }}</strong><small>{{ carouselSlides[currentSlide].spec }}</small></div><div class="hero-stamp">纹理<br />清晰<br />耐看</div><button class="carousel-arrow carousel-prev" type="button" aria-label="上一张" @click="previousSlide">‹</button><button class="carousel-arrow carousel-next" type="button" aria-label="下一张" @click="nextSlide">›</button><div class="carousel-dots" role="tablist" aria-label="首屏图片切换"><button v-for="(slide, index) in carouselSlides" :key="`${slide.name}-dot`" type="button" :class="{ active: index === currentSlide }" :aria-label="`查看${slide.name}`" :aria-selected="index === currentSlide" role="tab" @click="currentSlide = index; startCarousel()"></button></div></div></section>
+    <section id="top" class="hero-section"><div class="hero-copy"><p class="hero-kicker">把纹理看清楚</p><h1>好瓷砖<br /><em>值得慢慢挑</em></h1><p class="hero-description">从柔和的雾灰，到温润的奶油白，先看清颜色、触感和纹理，再决定哪一块适合你的空间</p><div class="hero-actions"><a class="primary-button" href="#collection">开始选砖 <span aria-hidden="true">↗</span></a><a class="secondary-link" href="#service">了解选砖服务</a></div><div class="hero-notes"><span><b>01</b>真实纹理</span><span><b>02</b>小样先看</span><span><b>03</b>按需搭配</span></div></div><div class="hero-visual" @mouseenter="stopCarousel" @mouseleave="startCarousel"><div class="carousel-frame" aria-live="polite"><video v-for="(slide, index) in carouselSlides" :key="slide.name" :ref="(element) => setVideoRef(element, index)" class="carousel-video" :class="{ active: index === currentSlide }" :src="slide.video" :poster="slide.poster" :aria-label="slide.alt" muted loop playsinline preload="metadata"></video></div><div class="hero-tag"><span>{{ carouselSlides[currentSlide].label }}</span><strong>{{ carouselSlides[currentSlide].name }}</strong><small>{{ carouselSlides[currentSlide].spec }}</small></div><div class="hero-stamp">纹理<br />清晰<br />耐看</div><button class="carousel-arrow carousel-prev" type="button" aria-label="上一张" @click="previousSlide">‹</button><button class="carousel-arrow carousel-next" type="button" aria-label="下一张" @click="nextSlide">›</button><div class="carousel-dots" role="tablist" aria-label="首屏视频切换"><button v-for="(slide, index) in carouselSlides" :key="`${slide.name}-dot`" type="button" :class="{ active: index === currentSlide }" :aria-label="`查看${slide.name}`" :aria-selected="index === currentSlide" role="tab" @click="currentSlide = index; startCarousel()"></button></div></div></section>
 
     <section class="promise-strip" aria-label="选砖承诺"><div><span class="promise-number">01</span><span><strong>真实纹理</strong><small>每一块都经得起近看</small></span></div><div><span class="promise-number">02</span><span><strong>小样先行</strong><small>把喜欢带回家再决定</small></span></div><div><span class="promise-number">03</span><span><strong>细致建议</strong><small>按空间给你搭配灵感</small></span></div></section>
 

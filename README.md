@@ -6,13 +6,14 @@ Tile Store 是一个通用风格的瓷砖选购网站，面向需要挑选地面
 
 - 深色材料展厅风格的首页
 - 首屏瓷砖材质展示和选砖入口
-- 首屏瓷砖样片轮播图，支持自动播放、左右切换和圆点导航
+- 首屏瓷砖展厅视频轮播，支持静音自动播放、左右切换、圆点导航和悬停暂停
 - 地面砖、墙面砖、岩板分类筛选
 - 瓷砖商品卡片和加入购物袋
 - 购物袋侧边栏、数量调整和订单填写
 - 手机号登录 / 注册界面，带验证码倒计时
 - 后端不可用时，仍可用本地精选商品和本地购物袋预览页面
-- 页面图片使用 `frontend/public/tiles/` 中的瓷砖纹理素材
+- 页面图片使用 `frontend/public/tiles/catalog/` 中的真实瓷砖展厅与样板素材
+- 页面视频使用 `frontend/public/videos/` 中的网页版本瓷砖展厅素材
 
 ## 本地启动前端
 
@@ -51,7 +52,8 @@ npm run build
 frontend/                 Vue 3 + Vite 前端
 frontend/src/App.vue      首页、商品、购物袋、登录交互
 frontend/src/styles.css   页面颜色、排版和响应式样式
-frontend/public/tiles/    瓷砖图片素材
+frontend/public/tiles/    瓷砖图片素材和完整素材目录
+frontend/public/videos/   瓷砖展厅视频轮播素材
 backend/                  Java Spring Boot 后端
 database/                 MySQL 初始化脚本
 PRODUCT.md                产品定位和界面约束
@@ -96,4 +98,4 @@ git push origin master
 
 ## 图片替换
 
-将自有的瓷砖产品图放进 `frontend/public/tiles/`，然后在 [frontend/src/App.vue](frontend/src/App.vue) 的 `tileImages` 中更新文件名。建议使用同一背景、同一光线和相近尺寸拍摄，商品陈列会更统一。
+将自有的瓷砖产品图放进 `frontend/public/tiles/catalog/`，然后在 [frontend/src/App.vue](frontend/src/App.vue) 的 `tileImages` 中更新文件名。建议使用同一背景、同一光线和相近尺寸拍摄，商品陈列会更统一。首页视频放进 `frontend/public/videos/`，再在 `carouselSlides` 中替换 `video` 和 `poster`。
