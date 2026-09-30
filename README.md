@@ -35,6 +35,33 @@ npm run build
 
 构建结果在 `frontend/dist/`。
 
+## 用 Docker 模拟部署后端
+
+电脑没有公网服务器时，可以先用 Docker 在本机模拟部署。它会启动一个独立的 MySQL 容器和 Spring Boot 容器，不会使用本机 MySQL 的 3306 端口。
+
+首次运行前，在项目根目录执行：
+
+```powershell
+Copy-Item .env.docker.example .env.docker
+docker compose --env-file .env.docker up --build
+```
+
+看到 `Started TileStoreApplication` 后，打开 <http://localhost:8080/api/products> 检查接口。停止服务按 `Ctrl+C`，后台启动可使用 `docker compose --env-file .env.docker up -d --build`。
+
+查看日志：
+
+```powershell
+docker compose --env-file .env.docker logs -f api
+```
+
+停止并删除容器（保留数据库数据）：
+
+```powershell
+docker compose --env-file .env.docker down
+```
+
+这只是本机部署练习；正式部署时，服务器平台会提供数据库地址、端口、用户名和密码，再把这些值设置为后端环境变量。
+
 ## 前后端地址
 
 前端通过 `VITE_API_BASE_URL` 连接 Java 后端。

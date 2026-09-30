@@ -1,0 +1,41 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tile-store-mysql-local
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - tile_store_mysql_data:/var/lib/mysql
+      - ./database/setup.sql:/docker-entrypoint-initdb.d/01-setup.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./backend
+    container_name: tile-store-api-local
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      MYSQLHOST: mysql
+      MYSQLPORT: 3306
+      MYSQLDATABASE: ${MYSQL_DATABASE}
+      MYSQLUSER: ${MYSQL_USER}
+      MYSQLPASSWORD: ${MYSQL_PASSWORD}
+      FRONTEND_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8080:8080"
+
+volumes:
+  tile_store_mysql_data:

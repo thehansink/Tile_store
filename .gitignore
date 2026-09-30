@@ -3,6 +3,7 @@ frontend/dist/
 frontend/.env
 frontend/.env.*
 !frontend/.env.example
+.env.docker
 backend/target/
 *.log
 *.iml
