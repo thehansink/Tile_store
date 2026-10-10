@@ -25,11 +25,15 @@ frontend/src/main.js                 # Vue 入口
 frontend/src/styles.css              # 全局样式与响应式规则
 frontend/public/                     # 图片、视频等静态资源
 backend/src/main/java/com/tilestore/ # config、product、cart、order 领域
+assistant/app.py                     # LangGraph 选砖助手流程
+deploy/nginx.conf                    # 正式部署统一入口示例
 database/                            # MySQL 初始化脚本
 docker-compose.yml                   # 本地 MySQL + API 编排
 ```
 
 新增代码放入所属领域。不要把数据库访问、复杂计算、请求重试或订单规则堆进 `App.vue` 或 Controller。
+
+Agent 只负责理解和推荐表达。商品事实通过 Spring API 获取，价格、库存、订单和权限必须由 Java 服务端校验；LLM 密钥只能通过环境变量注入。
 
 | 对象 | 规则 | 示例 |
 | --- | --- | --- |

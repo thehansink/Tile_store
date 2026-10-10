@@ -1,7 +1,11 @@
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import ProductDetailModal from './components/ProductDetailModal.vue';
+import TileAssistant from './components/TileAssistant.vue';
+import TileCalculator from './components/TileCalculator.vue';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const ASSISTANT_API_BASE_URL = (import.meta.env.VITE_ASSISTANT_API_URL || '/assistant-api').replace(/\/$/, '');
 const apiUrl = (path) => `${API_BASE_URL}${path}`;
 
 const tileImages = {
@@ -40,7 +44,10 @@ const categories = [
 const products = ref([]);
 const loading = ref(true);
 const activeCategory = ref('全部');
+const searchQuery = ref('');
+const sortOption = ref('featured');
 const isDemoMode = ref(false);
+const connectionMessage = ref('');
 const cart = ref([]);
 const cartOpen = ref(false);
 const cartMessage = ref('');
@@ -54,13 +61,23 @@ const codeSent = ref(false);
 const countdown = ref(0);
 const loginMessage = ref('');
 const currentSlide = ref(0);
+const selectedProduct = ref(null);
+const detailOpen = ref(false);
 let countdownTimer;
 let carouselTimer;
 const videoRefs = ref([]);
 
-const filteredProducts = computed(() => activeCategory.value === '全部'
-  ? products.value
-  : products.value.filter((product) => product.category === activeCategory.value));
+const filteredProducts = computed(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  const list = products.value
+    .filter((product) => activeCategory.value === '全部' || product.category === activeCategory.value)
+    .filter((product) => !query || `${product.name} ${product.specification || ''}`.toLowerCase().includes(query));
+  return [...list].sort((first, second) => {
+    if (sortOption.value === 'price-asc') return Number(first.price) - Number(second.price);
+    if (sortOption.value === 'price-desc') return Number(second.price) - Number(first.price);
+    return Number(second.id) - Number(first.id);
+  });
+});
 const cartTotal = computed(() => cart.value.reduce((sum, item) => sum + Number(item.product.price) * item.quantity, 0));
 const cartCount = computed(() => cart.value.reduce((sum, item) => sum + item.quantity, 0));
 const userPhone = computed(() => {
@@ -108,25 +125,26 @@ async function loadCart() {
 
 async function addToCart(product) {
   cartMessage.value = '';
-  if (isDemoMode.value) {
-    const existing = cart.value.find((item) => item.product.id === product.id);
-    if (existing) existing.quantity += 1;
-    else cart.value.push({ id: `demo-${product.id}`, product, quantity: 1 });
-    saveDemoCart();
-  } else {
-    const response = await fetch(apiUrl('/api/cart?cartKey=demo-user'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId: product.id, quantity: 1 })
-    });
-    if (!response.ok) {
-      cartMessage.value = '暂时没能加入购物袋，请稍后再试';
-      return;
+  try {
+    if (isDemoMode.value) {
+      const existing = cart.value.find((item) => item.product.id === product.id);
+      if (existing) existing.quantity += 1;
+      else cart.value.push({ id: `demo-${product.id}`, product, quantity: 1 });
+      saveDemoCart();
+    } else {
+      const response = await fetch(apiUrl('/api/cart?cartKey=demo-user'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id, quantity: 1 })
+      });
+      if (!response.ok) throw new Error('购物车服务不可用');
+      await loadCart();
     }
-    await loadCart();
+    cartMessage.value = `${product.name} 已加入购物袋`;
+    cartOpen.value = true;
+  } catch {
+    cartMessage.value = '暂时没能加入购物袋，请稍后再试';
   }
-  cartMessage.value = `${product.name} 已加入购物袋`;
-  cartOpen.value = true;
 }
 
 async function changeQuantity(item, quantity) {
@@ -213,6 +231,28 @@ function openLogin() {
   loginOpen.value = true;
 }
 
+function openProduct(product) {
+  selectedProduct.value = product;
+  detailOpen.value = true;
+}
+
+function closeProduct() {
+  detailOpen.value = false;
+  selectedProduct.value = null;
+}
+
+function addProductFromDetail(product) {
+  closeProduct();
+  addToCart(product);
+}
+
+function handleGlobalKeydown(event) {
+  if (event.key !== 'Escape') return;
+  if (detailOpen.value) closeProduct();
+  else if (cartOpen.value) cartOpen.value = false;
+  else if (loginOpen.value) loginOpen.value = false;
+}
+
 function nextSlide() {
   currentSlide.value = (currentSlide.value + 1) % carouselSlides.length;
 }
@@ -247,6 +287,7 @@ function stopCarousel() {
 watch(currentSlide, () => nextTick(syncCarouselVideos));
 
 onMounted(async () => {
+  window.addEventListener('keydown', handleGlobalKeydown);
   isLoggedIn.value = Boolean(localStorage.getItem('tile-store-phone'));
   try {
     const response = await fetch(apiUrl('/api/products'));
@@ -255,6 +296,7 @@ onMounted(async () => {
   } catch {
     products.value = fallbackProducts;
     isDemoMode.value = true;
+    connectionMessage.value = '当前展示的是本地精选款式，商品服务未连接';
   } finally {
     await loadCart();
     loading.value = false;
@@ -266,6 +308,7 @@ onMounted(async () => {
 onUnmounted(() => {
   window.clearInterval(countdownTimer);
   window.clearInterval(carouselTimer);
+  window.removeEventListener('keydown', handleGlobalKeydown);
 });
 </script>
 
@@ -273,7 +316,7 @@ onUnmounted(() => {
   <main class="site-shell">
     <header class="site-header">
       <a class="brand" href="#top" aria-label="回到首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><strong>TILE STORE</strong><small>瓷砖生活馆</small></span></a>
-      <nav class="main-nav" aria-label="主导航"><a href="#collection">精选瓷砖</a><a href="#inspiration">空间灵感</a><a href="#service">选砖服务</a></nav>
+      <nav class="main-nav" aria-label="主导航"><a href="#collection">精选瓷砖</a><a href="#assistant">选砖助手</a><a href="#calculator">用量估算</a><a href="#faq">选砖指南</a></nav>
       <div class="header-actions"><button class="text-button" type="button" @click="isLoggedIn ? logout() : openLogin()">{{ isLoggedIn ? userPhone : '登录' }}</button><button class="bag-button" type="button" aria-label="打开购物袋" @click="cartOpen = true"><span class="bag-icon" aria-hidden="true"></span><span>购物袋</span><b v-if="cartCount">{{ cartCount }}</b></button></div>
     </header>
 
@@ -281,16 +324,23 @@ onUnmounted(() => {
 
     <section class="promise-strip" aria-label="选砖承诺"><div><span class="promise-number">01</span><span><strong>真实纹理</strong><small>每一块都经得起近看</small></span></div><div><span class="promise-number">02</span><span><strong>小样先行</strong><small>把喜欢带回家再决定</small></span></div><div><span class="promise-number">03</span><span><strong>细致建议</strong><small>按空间给你搭配灵感</small></span></div></section>
 
-    <section id="collection" class="collection-section"><div class="section-heading"><div><p class="section-kicker">今日选砖</p><h2>把喜欢的样子带回家</h2></div><p>精选耐看的材质与纹理<br />让每一次选择都更笃定</p></div><div class="category-tabs" role="tablist" aria-label="瓷砖分类"><button v-for="category in categories" :key="category.value" type="button" :class="{ active: activeCategory === category.value }" @click="activeCategory = category.value">{{ category.label }}</button></div><p v-if="loading" class="state">正在为你准备精选款式</p><div v-else class="product-grid"><article v-for="(product, index) in filteredProducts" :key="product.id" class="product-card" :class="`card-${index + 1}`"><div class="product-image-wrap"><img :src="product.imageUrl" :alt="product.name" /><span class="product-category">{{ categoryLabel(product.category) }}</span><button class="quick-add" type="button" :aria-label="`加入${product.name}`" @click="addToCart(product)">+</button></div><div class="product-info"><div><h3>{{ product.name }}</h3><p>{{ product.specification }}</p></div><strong>¥{{ Number(product.price).toFixed(0) }}<small>/{{ product.unit }}</small></strong></div><button class="card-add" type="button" @click="addToCart(product)">加入购物袋 <span aria-hidden="true">↗</span></button></article></div><p v-if="!loading && !filteredProducts.length" class="state">这个分类暂时没有款式</p><p v-if="cartMessage" class="inline-message">{{ cartMessage }}</p></section>
+    <section id="collection" class="collection-section"><div class="section-heading"><div><p class="section-kicker">今日选砖</p><h2>把喜欢的样子带回家</h2></div><p>精选耐看的材质与纹理<br />让每一次选择都更笃定</p></div><p v-if="connectionMessage" class="connection-message" role="status">{{ connectionMessage }}</p><div class="catalog-tools"><label class="catalog-search"><span class="sr-only">搜索瓷砖</span><input v-model.trim="searchQuery" type="search" placeholder="搜索名称或规格" /></label><label class="catalog-sort"><span class="sr-only">排序方式</span><select v-model="sortOption"><option value="featured">推荐排序</option><option value="price-asc">价格从低到高</option><option value="price-desc">价格从高到低</option></select></label></div><div class="category-tabs" role="tablist" aria-label="瓷砖分类"><button v-for="category in categories" :key="category.value" type="button" :class="{ active: activeCategory === category.value }" @click="activeCategory = category.value">{{ category.label }}</button></div><p v-if="loading" class="state">正在为你准备精选款式</p><div v-else class="product-grid"><article v-for="(product, index) in filteredProducts" :key="product.id" class="product-card" :class="`card-${index + 1}`"><div class="product-image-wrap"><button class="product-preview" type="button" :aria-label="`查看${product.name}详情`" @click="openProduct(product)"><img :src="product.imageUrl" :alt="`${product.name}瓷砖纹理`" /></button><span class="product-category">{{ categoryLabel(product.category) }}</span><button class="quick-add" type="button" :aria-label="`加入${product.name}`" @click="addToCart(product)">+</button></div><button class="product-info product-info-button" type="button" @click="openProduct(product)"><div><h3>{{ product.name }}</h3><p>{{ product.specification }}</p></div><strong>¥{{ Number(product.price).toFixed(0) }}<small>/{{ product.unit }}</small></strong></button><button class="card-add" type="button" @click="addToCart(product)">加入购物袋 <span aria-hidden="true">↗</span></button></article></div><p v-if="!loading && !filteredProducts.length" class="state">没有找到合适的款式，可以换个关键词或分类</p><p v-if="cartMessage" class="inline-message">{{ cartMessage }}</p></section>
 
     <section id="inspiration" class="inspiration-section"><div class="inspiration-image"><img :src="tileImages.cream" alt="奶油白瓷砖的细腻表面" /><span>纹理观察 · 奶油白</span></div><div class="inspiration-copy"><p class="section-kicker">选砖灵感</p><h2>先看清纹理<br />再想象铺好的样子</h2><p>同一块砖在不同光线下会有不同表情，放大细节，颜色和质感都更容易判断</p><a class="secondary-link" href="#collection">查看全部款式 <span aria-hidden="true">↗</span></a></div></section>
 
+    <section id="assistant" class="assistant-wrap"><TileAssistant :products="products" :api-base-url="ASSISTANT_API_BASE_URL" @select-product="openProduct" /></section>
+
+    <section id="calculator" class="calculator-wrap"><TileCalculator :products="products" /></section>
+
     <section id="service" class="service-section"><div class="section-heading"><div><p class="section-kicker">选砖服务</p><h2>从看样到铺好<br />每一步都有回应</h2></div><a class="secondary-link" href="#top">回到顶部 <span aria-hidden="true">↑</span></a></div><div class="service-list"><div><span>01</span><h3>按空间挑选</h3><p>厨房、卫生间、客厅，不同场景有不同的耐用答案</p></div><div><span>02</span><h3>小样先寄到家</h3><p>在自己的光线和家具旁，看清真实颜色再做决定</p></div><div><span>03</span><h3>到店慢慢体验</h3><p>来店里摸一摸、比一比，找到最合心意的那一块</p></div></div></section>
+
+    <section id="faq" class="faq-section" aria-labelledby="faq-title"><div class="section-heading"><div><p class="section-kicker">选砖指南</p><h2 id="faq-title">下单前，先把疑问问清楚</h2></div><p>把关键判断留在购买之前<br />选得更安心，也更少返工</p></div><div class="faq-list"><details><summary>瓷砖为什么要多买一些</summary><p>铺贴时需要考虑裁切、损耗和后期维修留样。你可以先用上方用量估算器计算，再让施工人员结合现场尺寸确认。</p></details><details><summary>不同批次会有色差吗</summary><p>天然纹理和生产批次可能存在轻微差异。建议同一空间一次确认足量，并保留少量余砖作为日后维修备用。</p></details><details><summary>可以先看小样再决定吗</summary><p>可以。小样适合在你自己的采光、墙面和家具旁观察，最终大面积铺贴效果仍以整箱实物为准。</p></details><details><summary>AI 选砖助手会替我下单吗</summary><p>不会。助手只根据你的描述提供筛选建议，商品价格、购物袋和订单提交仍由网站流程完成，付款前你可以随时修改。</p></details></div></section>
 
     <footer class="site-footer"><span>TILE STORE · 瓷砖生活馆</span><span>把家的质感铺在每一寸日常</span></footer>
 
     <div v-if="cartOpen" class="overlay" @click.self="cartOpen = false"><aside class="cart-drawer" aria-label="购物袋"><div class="drawer-heading"><div><p class="section-kicker">我的选择</p><h2>购物袋 <small>{{ cartCount }} 件</small></h2></div><button class="close-button" type="button" aria-label="关闭购物袋" @click="cartOpen = false">×</button></div><p v-if="!cart.length" class="drawer-empty">还没有喜欢的款式<br />先去逛逛精选瓷砖</p><div v-for="item in cart" :key="item.id" class="drawer-line"><img :src="item.product.imageUrl" :alt="item.product.name" /><div><h3>{{ item.product.name }}</h3><p>¥{{ Number(item.product.price).toFixed(0) }} / {{ item.product.unit }}</p><div class="stepper"><button type="button" aria-label="减少数量" @click="changeQuantity(item, item.quantity - 1)">−</button><b>{{ item.quantity }}</b><button type="button" aria-label="增加数量" @click="changeQuantity(item, item.quantity + 1)">+</button></div></div><strong>¥{{ (Number(item.product.price) * item.quantity).toFixed(0) }}</strong></div><div v-if="cart.length" class="drawer-bottom"><div><span>合计</span><strong>¥{{ cartTotal.toFixed(0) }}</strong></div><form @submit.prevent="createOrder"><label>收货人<input v-model.trim="orderForm.receiverName" required placeholder="请输入姓名" /></label><label>联系电话<input v-model.trim="orderForm.receiverPhone" required pattern="1[0-9]{10}" placeholder="请输入手机号" /></label><label>收货地址<input v-model.trim="orderForm.shippingAddress" required placeholder="请输入详细地址" /></label><button class="primary-button" type="submit">提交订单 <span aria-hidden="true">↗</span></button></form><p v-if="orderMessage" class="inline-message">{{ orderMessage }}</p></div></aside></div>
 
     <div v-if="loginOpen" class="overlay auth-overlay" @click.self="loginOpen = false"><section class="auth-panel" aria-label="登录"><button class="close-button" type="button" aria-label="关闭登录" @click="loginOpen = false">×</button><div class="auth-mark"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div><p class="section-kicker">欢迎回来</p><h2>登录后<br /><em>继续挑选喜欢的砖</em></h2><p class="auth-intro">收藏喜欢的款式，购物袋会一直替你记着</p><form class="auth-form" @submit.prevent="submitLogin"><label>手机号<input v-model.trim="loginForm.phone" type="tel" inputmode="numeric" maxlength="11" placeholder="请输入手机号" autocomplete="tel" /></label><label>验证码<div class="code-field"><input v-model.trim="loginForm.code" type="text" inputmode="numeric" maxlength="6" placeholder="请输入 6 位验证码" autocomplete="one-time-code" /><button type="button" :disabled="countdown > 0" @click="sendCode">{{ countdown > 0 ? `${countdown}s 后重发` : '获取验证码' }}</button></div></label><button class="primary-button auth-submit" type="submit">登录 / 注册 <span aria-hidden="true">↗</span></button></form><p v-if="loginMessage" class="form-message">{{ loginMessage }}</p><p class="auth-note">首次登录即代表你同意我们的服务说明</p></section></div>
+    <ProductDetailModal :product="selectedProduct" :open="detailOpen" @close="closeProduct" @add="addProductFromDetail" />
   </main>
 </template>

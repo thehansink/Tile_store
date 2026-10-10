@@ -37,5 +37,38 @@ services:
     ports:
       - "8080:8080"
 
+  assistant:
+    build:
+      context: ./assistant
+    container_name: tile-store-assistant-local
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      PRODUCT_API_URL: http://api:8080/api/products
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o-mini}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      ASSISTANT_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "8000:8000"
+
+  web:
+    profiles: ["web"]
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ""
+        VITE_ASSISTANT_API_URL: /assistant-api
+    container_name: tile-store-web-local
+    restart: unless-stopped
+    depends_on:
+      - api
+      - assistant
+    ports:
+      - "8088:80"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+
 volumes:
   tile_store_mysql_data:

@@ -17,6 +17,10 @@ Tile Store 是一个通用风格的瓷砖选购网站，面向需要挑选地面
 - 瓷砖商品卡片和加入购物袋
 - 购物袋侧边栏、数量调整和订单填写
 - 手机号登录 / 注册界面，带验证码倒计时
+- 商品详情弹窗、名称/规格搜索、价格排序
+- LangGraph 选砖助手：按空间、颜色和预算推荐商品
+- AI 助手支持快捷需求模板、识别条件标签、推荐理由和商品详情入口
+- 房间面积、损耗率、整箱数量和金额估算
 - 后端不可用时，仍可用本地精选商品和本地购物袋预览页面
 - 页面图片使用 `frontend/public/tiles/catalog/` 中的真实瓷砖展厅与样板素材
 - 页面视频使用 `frontend/public/videos/` 中的网页版本瓷砖展厅素材
@@ -43,7 +47,7 @@ npm run build
 
 ## 用 Docker 模拟部署后端
 
-电脑没有公网服务器时，可以先用 Docker 在本机模拟部署。它会启动一个独立的 MySQL 容器和 Spring Boot 容器，不会使用本机 MySQL 的 3306 端口。
+电脑没有公网服务器时，可以先用 Docker 在本机模拟部署。它会启动独立的 MySQL、Spring Boot 和 LangGraph 助手容器，不会使用本机 MySQL 的 3306 端口。
 
 首次运行前，在项目根目录执行：
 
@@ -52,12 +56,28 @@ Copy-Item .env.docker.example .env.docker
 docker compose --env-file .env.docker up --build
 ```
 
-看到 `Started TileStoreApplication` 后，打开 <http://localhost:8080/api/products> 检查接口。停止服务按 `Ctrl+C`，后台启动可使用 `docker compose --env-file .env.docker up -d --build`。
+看到 `Started TileStoreApplication` 后，打开 <http://localhost:8080/api/products> 检查接口，打开 <http://localhost:8000/health> 检查选砖助手。停止服务按 `Ctrl+C`，后台启动可使用 `docker compose --env-file .env.docker up -d --build`。
+
+前端仍需单独运行：
+
+```powershell
+cd frontend
+npm run dev
+```
+
+想练习 Nginx 统一入口时，使用 `web` profile：
+
+```powershell
+docker compose --env-file .env.docker --profile web up --build
+```
+
+然后打开 <http://localhost:8088>。本地单独开发不需要 Nginx，正式服务器建议由 Nginx 统一转发前端、Java API 和 LangGraph 助手。
 
 查看日志：
 
 ```powershell
 docker compose --env-file .env.docker logs -f api
+docker compose --env-file .env.docker logs -f assistant
 ```
 
 停止并删除容器（保留数据库数据）：
@@ -88,8 +108,11 @@ frontend/src/styles.css   页面颜色、排版和响应式样式
 frontend/public/tiles/    瓷砖图片素材和完整素材目录
 frontend/public/videos/   瓷砖展厅视频轮播素材
 backend/                  Java Spring Boot 后端
+assistant/                Python LangGraph 选砖助手，可选接入 LLM
+deploy/nginx.conf         正式部署的 Nginx 统一入口示例
 database/                 MySQL 初始化脚本
 PRODUCT.md                产品定位和界面约束
+LANGGRAPH_GUIDE.md        LangGraph 学习与项目接入说明
 ```
 
 ## 当前接口状态
@@ -103,9 +126,22 @@ PRODUCT.md                产品定位和界面约束
 - `DELETE /api/cart/{productId}?cartKey=...` 删除商品
 - `POST /api/orders?cartKey=...` 创建订单
 
+选砖助手接口：
+
+- `GET /health` 助手健康检查
+- `POST /recommend` 输入自然语言选砖需求，返回推荐商品
+
+助手页面在服务不可用时会自动使用本地商品做演示，并明确标注演示状态；启动 LangGraph 服务后，会返回识别到的空间、色调、预算和推荐理由。当前商品字段仍较少，适用空间、表面工艺、每箱覆盖面积和库存建议作为下一阶段数据模型补充。
+
 手机号登录界面目前是前端演示功能：验证码不会真的发送到手机，登录状态只保存在浏览器本地。正式使用时，还需要后端增加用户表、发送验证码接口、验证码校验和登录令牌。
 
 订单页面目前只记录订单信息，不会真实扣款。接入微信支付或支付宝前，需要先在服务端校验订单金额，并使用官方支付接口。
+
+## LangGraph 和 LLM
+
+LangGraph 不是大模型，而是把“理解需求、读取商品、排序推荐、生成回复”组织成状态图的流程框架。`assistant/` 服务默认不需要模型密钥，先使用规则推荐；配置 `LLM_API_KEY`、`LLM_MODEL` 和可选的 `LLM_BASE_URL` 后，才会让 OpenAI 兼容模型参与自然语言回复。商品价格、库存、订单金额仍由 Java 后端和数据库决定，不能交给模型。
+
+详细学习说明见 [LANGGRAPH_GUIDE.md](LANGGRAPH_GUIDE.md)。
 
 ## 数据库初始化
 

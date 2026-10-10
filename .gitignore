@@ -10,3 +10,6 @@ backend/target/
 .idea/
 .vscode/
 tmp-material-contact/
+assistant/.venv/
+assistant/.env
+**/__pycache__/
