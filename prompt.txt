@@ -1,0 +1,102 @@
+# ZiroBuild Hero
+
+A full-viewport, dark, video-background hero section for the **ZiroBuild** brand (an AI-native product platform), built with **React** and **Tailwind CSS**. It pairs a thin top navigation bar with a centered headline, eyebrow pill, supporting paragraph, and two call-to-action buttons, all layered over a looping background video. Every interactive label uses a slick "text rolls up and a duplicate rolls in from below" hover animation.
+
+## Tech stack (libraries actually used)
+- **React** (functional component; file begins with `"use client";`).
+- **Tailwind CSS** for all styling (utility classes).
+- **lucide-react** for the `ArrowRight` icon.
+- No other libraries are imported.
+
+## Fonts & global styles
+- No `@import` or `<link>` font tags are present in the component. Typography relies on Tailwind font utilities:
+  - `font-sans` on the root container (default sans stack).
+  - `font-display` on the `<h1>` (intended to map to a display font; if no `font-display` family is configured in the host Tailwind theme, it falls back to the default sans family).
+- No global `body`/`html` resets are set by this component. Scope any font setup to this section.
+
+## Section container
+- Root element: a `<div>` with classes `relative min-h-screen w-full flex flex-col overflow-hidden text-white font-sans bg-black` plus any passed `className`.
+- Background color: pure black (`bg-black` = `#010000`); default text color white.
+- Full viewport height (`min-h-screen`), full width, `overflow-hidden`, vertical flex column.
+- Accepts an optional `className` prop appended to the root classes.
+
+## Structure, section by section
+
+### 1. Background video (z-0)
+- A `<video>` element with attributes `autoPlay loop muted playsInline`.
+- Classes: `absolute inset-0 w-full h-full object-cover z-0`.
+- `src="https://cdn.jiro.build/BG%20effect%20for%20Tanvir/bg-video.mp4"`.
+- Covers the entire container behind all content.
+
+### 2. Content wrapper (z-10)
+- `<div className="relative z-10 flex flex-col min-h-screen">` holds the header and main content above the video.
+
+### 3. Header / navigation
+- `<header>` classes: `flex items-center justify-between px-8 py-6 w-full max-w-[900px] mx-auto`.
+- **Left — logo:** `<div className="text-2xl font-semibold tracking-tight">ZiroBuild</div>` (text wordmark, no image).
+- **Center — nav (desktop only, `hidden md:flex`):** classes `gap-8 text-sm font-medium text-gray-300`. Five links, each an `<a href="#">` with `group hover:text-white transition-colors`, wrapping the `AnimatedText` component. Labels verbatim, in order: **Home**, **Products**, **Pricing**, **Features**, **Resources**.
+- **Right — auth cluster:** `flex items-center gap-6 text-sm font-medium`.
+  - Link: `<a href="#" className="group hover:text-white text-gray-300 transition-colors">` wrapping `AnimatedText text="Log in"`.
+  - Button: `<button className="group px-5 py-2.5 border border-white/20 rounded-md hover:bg-white/10 transition-colors">` wrapping `AnimatedText text="Get Started"`.
+
+### 4. Main hero content
+- `<main>` classes: `flex-1 flex flex-col items-center justify-center pr-4 pl-[17px] max-w-5xl mx-auto text-center w-full mt-12 mb-[-80px] h-[680px]`.
+  - Note the asymmetric padding (`pr-4 pl-[17px]`), top margin `mt-12`, negative bottom margin `mb-[-80px]`, and fixed `h-[680px]`.
+- **Eyebrow pill:** `<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-xs font-medium text-gray-200 mb-6">`. Contains a `<span className="w-2 h-2 rounded-full bg-white"></span>` dot followed by the text **`Trusted by 500+ Innovation Teams`**.
+- **Headline `<h1>`:** classes `text-[80px] leading-[88.6px] font-display font-medium tracking-tight mb-[20px]`. Copy (with a `<br />` after the first line):
+  - Line 1: `Build The Future With`
+  - Line 2: `AI-Native Products`
+- **Paragraph `<p>`:** classes `text-[18px] leading-[26px] text-gray-300 mb-8 max-w-2xl font-light`. Copy verbatim:
+  - `Design, build, and scale intelligent products, with powerful AI tools built for modern teams.`
+- **CTA button row:** `<div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">`.
+  - **Primary button:** `<button className="group px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors">` wrapping `AnimatedText text="Explore More"`.
+  - **Secondary button:** `<button className="group px-8 py-4 bg-white/10 border border-white/30 backdrop-blur-md text-white font-medium rounded-lg hover:bg-white/20 transition-colors flex items-center justify-center gap-2">` wrapping `AnimatedText text="Get Started"` followed by `<ArrowRight className="w-4 h-4" />`.
+
+## Assets (every URL)
+- Background video: `https://cdn.jiro.build/BG%20effect%20for%20Tanvir/bg-video.mp4`
+- `ArrowRight` icon from `lucide-react` (no external URL).
+
+## Animations
+
+### AnimatedText hover roll (used on every nav link and button label)
+A reusable inline component. Structure: an outer `<span className="relative overflow-hidden inline-flex">` containing two copies of the same text:
+- **Top copy:** `<span className="transition-transform duration-500 ease-in-out group-hover:-translate-y-[120%] whitespace-nowrap">{text}</span>` — sits in place by default; on parent hover (the parent carries the `group` class) it slides up by `-120%` of its height.
+- **Bottom copy:** `<span className="absolute inset-0 transition-transform duration-500 ease-in-out translate-y-[120%] group-hover:translate-y-0 whitespace-nowrap flex justify-center items-center">{text}</span>` — starts pushed `120%` below and on hover slides to `translate-y-0`.
+- Timing: `duration-500` (500ms), `ease-in-out`. The effect is a vertical "ticker roll" where the visible label rolls up and out while an identical label rolls up into its place.
+
+### Other hover transitions
+- Nav links / "Log in": `hover:text-white transition-colors` (gray-300 -> white).
+- "Get Started" header button: `hover:bg-white/10 transition-colors`.
+- Primary CTA: `hover:bg-gray-100 transition-colors`.
+- Secondary CTA: `hover:bg-white/20 transition-colors`.
+
+## Responsive
+- Center nav is hidden below `md` (`hidden md:flex`).
+- CTA row stacks vertically on mobile (`flex-col`) and switches to a row at `sm` (`sm:flex-row`); width is full on mobile, auto at `sm` (`w-full sm:w-auto`).
+- Headline uses a fixed `text-[80px]` with `leading-[88.6px]` at all breakpoints (no responsive scaling defined in the original); consider that on small screens this will be large.
+- `<main>` has a fixed `h-[680px]` and a negative bottom margin `mb-[-80px]`.
+
+## Key design principles
+- Dark, cinematic aesthetic: pure black base with a looping full-bleed video and white/translucent UI.
+- Heavy use of translucency and blur for the glass pill and secondary button (`bg-white/5`, `bg-white/10`, `backdrop-blur-md`, `border-white/20`/`/30`).
+- High-contrast typography: large `80px` medium-weight headline, light `18px` body in `text-gray-300`.
+- Consistent "roll-up" micro-interaction on every textual control for a polished, branded feel.
+- Two-tier CTA hierarchy: solid white primary ("Explore More") vs. glassy outlined secondary ("Get Started" + arrow).
+
+## Common mistakes to avoid
+- Do not omit `playsInline` / `muted` / `autoPlay` / `loop` on the video, or it will not autoplay on mobile.
+- Keep the two text copies in `AnimatedText` identical and the wrapper `overflow-hidden`, or the roll animation breaks.
+- The hover animation depends on the parent element carrying the `group` class — keep `group` on every link/button.
+- Preserve the exact spacing oddities (`pl-[17px]`, `mb-[-80px]`, `h-[680px]`, `leading-[88.6px]`) — they are intentional.
+- Keep the video at `z-0` and content at `z-10` so the text stays readable.
+- Maintain translucent values exactly (`white/5`, `white/10`, `white/20`, `white/30`) for the glass look.
+
+## Page title
+ZiroBuild — Build The Future With AI-Native Products
+
+## Integration (build-safety — do not skip)
+- Add this section as a **new** component file with a unique name. Don't edit or overwrite any existing file except to add its import and render it.
+- Render it **after** all existing sections; keep every previously built section exactly as-is — never replace or remove them.
+- If no project exists, create a minimal React + Tailwind app; if one exists, use it as-is — don't re-scaffold or change the Tailwind/build config or version.
+- Keep it self-contained: scope its fonts and any resets to this section; never set global `body`/`html`/`*` styles or a global font.
+- Install only the libraries this section names.

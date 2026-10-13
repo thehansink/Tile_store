@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-13T02:56:27Z",
+  "title": "Design System: Tile Store",
+  "extensions": {
+    "colorMeta": {
+      "canvas": { "role": "neutral", "displayName": "近黑画布" },
+      "surface": { "role": "neutral", "displayName": "炭灰表面" },
+      "ink": { "role": "neutral", "displayName": "柔白正文" },
+      "muted": { "role": "neutral", "displayName": "中性灰说明" },
+      "primary": { "role": "primary", "displayName": "纯白主操作" },
+      "glass": { "role": "neutral", "displayName": "透明白次操作" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "首屏显示字", "purpose": "品牌和品类的两行短句；共用现有系统无衬线字体。" },
+      "headline": { "displayName": "章节标题", "purpose": "左对齐章节标题，在平板和窄屏采用固定字号档位。" },
+      "body": { "displayName": "常规正文", "purpose": "材质、选样和使用说明。" }
+    },
+    "shadows": [
+      { "name": "compare-bar", "value": "0 12px 32px rgba(0, 0, 0, 0.4)", "purpose": "固定双图对比栏的操作层次。" },
+      { "name": "comparison-divider", "value": "0 1px 10px rgba(0, 0, 0, 0.3)", "purpose": "双图对比白色分界线。" }
+    ],
+    "motion": [
+      { "name": "rolling-label", "value": "transform 500ms ease-in-out", "purpose": "悬停和键盘焦点触发两层文字120%上下位移；副本隐藏于辅助技术。" },
+      { "name": "button-feedback", "value": "background 200ms ease, transform 200ms ease", "purpose": "主次按钮的背景变化和2px轻抬。" },
+      { "name": "gallery-image", "value": "transform 700ms ease", "purpose": "图片预览入口轻微放大至1.045倍。" },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "停用滚动副本、自动视频播放、平滑滚动和悬停位移。" }
+    ],
+    "breakpoints": [
+      { "name": "minimum-width", "value": "320px" },
+      { "name": "narrow-max", "value": "380px" },
+      { "name": "mobile-max", "value": "767px" },
+      { "name": "tablet-max", "value": "1023px" }
+    ],
+    "depth": { "heroBlur": "12px", "dialogBackdropBlur": "10px", "reducedTransparency": "prefers-reduced-transparency: reduce uses solid control surfaces" },
+    "sources": ["frontend/src/styles.css", "frontend/src/components/RollingText.vue", "frontend/src/components/TileShowroomHero.vue", "frontend/src/components/MaterialGallery.vue"]
+  },
+  "components": [
+    {
+      "name": "白色主按钮",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "主要操作；包含真实的双层滚动文字、焦点与禁用状态。",
+      "html": "<button class=\"ds-primary\"><span class=\"ds-roll\"><span>探索精选瓷砖</span><span aria-hidden=\"true\">探索精选瓷砖</span></span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-7-7 7 7-7 7\"/></svg></button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:52px;padding:14px 24px;border:1px solid #fff;border-radius:var(--radius-md,8px);background:#fff;color:#111;font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;font-size:15px;font-weight:500;letter-spacing:0;white-space:nowrap;cursor:pointer;transition:background 200ms ease,transform 200ms ease}.ds-primary:hover:not(:disabled){background:#e7e7e7;transform:translateY(-2px)}.ds-primary:focus-visible{outline:2px solid #fff;outline-offset:4px}.ds-primary:disabled{opacity:.5;cursor:not-allowed}.ds-roll{position:relative;display:inline-flex;overflow:hidden;line-height:1.5;vertical-align:middle}.ds-roll>span{white-space:nowrap;transition:transform 500ms ease-in-out}.ds-roll>span:last-child{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:translateY(120%)}.ds-primary:hover .ds-roll>span:first-child,.ds-primary:focus-visible .ds-roll>span:first-child{transform:translateY(-120%)}.ds-primary:hover .ds-roll>span:last-child,.ds-primary:focus-visible .ds-roll>span:last-child{transform:translateY(0)}@media(prefers-reduced-motion:reduce){.ds-primary,.ds-roll>span{transition:none}.ds-roll>span:last-child{display:none}.ds-primary:hover,.ds-primary:hover .ds-roll>span:first-child,.ds-primary:focus-visible .ds-roll>span:first-child{transform:none}}"
+    },
+    {
+      "name": "透明次按钮",
+      "kind": "button",
+      "refersTo": "button-glass",
+      "description": "次操作的透明白表面，保留滚动反馈和减少透明效果支持。",
+      "html": "<button class=\"ds-glass\"><span class=\"ds-glass-roll\"><span>走进材质图集</span><span aria-hidden=\"true\">走进材质图集</span></span><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14m-7-7 7 7-7 7\"/></svg></button>",
+      "css": ".ds-glass{display:inline-flex;align-items:center;justify-content:center;gap:14px;min-height:52px;padding:14px 24px;border:1px solid rgba(255,255,255,.3);border-radius:var(--radius-md,8px);background:rgba(255,255,255,.1);backdrop-filter:blur(12px);color:#fff;font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;font-size:15px;font-weight:500;letter-spacing:0;white-space:nowrap;cursor:pointer;transition:background 200ms ease,transform 200ms ease}.ds-glass:hover{background:rgba(255,255,255,.2);transform:translateY(-2px)}.ds-glass:focus-visible{outline:2px solid #fff;outline-offset:4px}.ds-glass:disabled{opacity:.5;cursor:not-allowed}.ds-glass-roll{position:relative;display:inline-flex;overflow:hidden;line-height:1.5}.ds-glass-roll>span{white-space:nowrap;transition:transform 500ms ease-in-out}.ds-glass-roll>span:last-child{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:translateY(120%)}.ds-glass:hover .ds-glass-roll>span:first-child,.ds-glass:focus-visible .ds-glass-roll>span:first-child{transform:translateY(-120%)}.ds-glass:hover .ds-glass-roll>span:last-child,.ds-glass:focus-visible .ds-glass-roll>span:last-child{transform:translateY(0)}@media(prefers-reduced-motion:reduce){.ds-glass,.ds-glass-roll>span{transition:none}.ds-glass-roll>span:last-child{display:none}.ds-glass:hover,.ds-glass:hover .ds-glass-roll>span:first-child,.ds-glass:focus-visible .ds-glass-roll>span:first-child{transform:none}}@media(prefers-reduced-transparency:reduce){.ds-glass{background:#202020;backdrop-filter:none}}"
+    },
+    {
+      "name": "图标操作",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "收藏等工具操作使用一致Lucide图标与白底选中状态。",
+      "html": "<div class=\"ds-icon-row\"><button class=\"ds-icon\" aria-label=\"收藏展厅长廊\" title=\"收藏照片\" aria-pressed=\"false\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z\"/></svg></button><button class=\"ds-icon ds-icon-selected\" aria-label=\"取消收藏展厅长廊\" title=\"取消收藏\" aria-pressed=\"true\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z\"/></svg></button></div>",
+      "css": ".ds-icon-row{display:flex;gap:8px;color:var(--color-ink,#f5f5f5)}.ds-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:44px;height:44px;padding:0;border:1px solid transparent;border-radius:var(--radius-sm,6px);background:transparent;color:inherit;cursor:pointer;transition:background 200ms ease}.ds-icon:hover{background:rgba(255,255,255,.1)}.ds-icon-selected{background:#fff;color:#111}.ds-icon:focus-visible{outline:2px solid #fff;outline-offset:4px}.ds-icon:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-icon{transition:none}}"
+    },
+    {
+      "name": "深色输入框",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "搜索、手机和订单表单共用的深色输入表面。",
+      "html": "<input class=\"ds-field\" type=\"search\" aria-label=\"搜索瓷砖\" placeholder=\"搜索名称、规格或用途\" />",
+      "css": ".ds-field{max-width:100%;min-width:0;min-height:48px;padding:12px 14px;border:1px solid var(--color-line,rgba(255,255,255,.2));border-radius:var(--radius-sm,6px);background:var(--color-surface,#131415);color:var(--color-ink,#f5f5f5);font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;font-size:16px;letter-spacing:0;caret-color:#fff}.ds-field::placeholder{color:#a8a8ab}.ds-field:focus-visible{outline:2px solid #fff;outline-offset:4px}"
+    },
+    {
+      "name": "导航文字",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "桌面导航使用灰白文字和500ms滚动反馈；布局断点由页面控制。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航\"><a href=\"#collection\"><span class=\"ds-nav-roll\"><span>精选瓷砖</span><span aria-hidden=\"true\">精选瓷砖</span></span></a><a href=\"#gallery\"><span class=\"ds-nav-roll\"><span>材质图集</span><span aria-hidden=\"true\">材质图集</span></span></a></nav>",
+      "css": ".ds-nav{display:flex;gap:28px;color:#d1d5db;font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;font-size:14px;letter-spacing:0}.ds-nav a{color:inherit;text-decoration:none}.ds-nav a:hover{color:#fff}.ds-nav a:focus-visible{outline:2px solid #fff;outline-offset:4px}.ds-nav-roll{position:relative;display:inline-flex;overflow:hidden;line-height:1.5}.ds-nav-roll>span{white-space:nowrap;transition:transform 500ms ease-in-out}.ds-nav-roll>span:last-child{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transform:translateY(120%)}.ds-nav a:hover .ds-nav-roll>span:first-child,.ds-nav a:focus-visible .ds-nav-roll>span:first-child{transform:translateY(-120%)}.ds-nav a:hover .ds-nav-roll>span:last-child,.ds-nav a:focus-visible .ds-nav-roll>span:last-child{transform:translateY(0)}@media(prefers-reduced-motion:reduce){.ds-nav-roll>span{transition:none}.ds-nav-roll>span:last-child{display:none}.ds-nav a:hover .ds-nav-roll>span:first-child,.ds-nav a:focus-visible .ds-nav-roll>span:first-child{transform:none}}"
+    },
+    {
+      "name": "图集分类",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "透明未选中项与白色选中项，保持44px最小高度。",
+      "html": "<div class=\"ds-chips\" role=\"group\" aria-label=\"照片分类\"><button class=\"ds-chip ds-chip-active\" aria-pressed=\"true\">全部看样</button><button class=\"ds-chip\" aria-pressed=\"false\">展厅</button><button class=\"ds-chip\" aria-pressed=\"false\">木纹</button></div>",
+      "css": ".ds-chips{display:flex;flex-wrap:wrap;gap:8px}.ds-chip{min-height:44px;padding:8px 20px;border:0;border-radius:var(--radius-sm,6px);background:transparent;color:var(--color-muted,#b4b5b7);font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;font-size:15px;letter-spacing:0;cursor:pointer}.ds-chip:hover{color:#fff;background:rgba(255,255,255,.06)}.ds-chip.ds-chip-active{color:#111;background:#fff}.ds-chip:focus-visible{outline:2px solid #fff;outline-offset:4px}"
+    },
+    {
+      "name": "材质照片项目",
+      "kind": "card",
+      "refersTo": "gallery-card",
+      "description": "真实媒体、稳定4:3比例与轻微放大反馈；没有独立卡片背景。",
+      "html": "<article class=\"ds-gallery\"><button class=\"ds-gallery-preview\" type=\"button\" aria-label=\"放大展厅长廊\"><img src=\"/tiles/gallery/cc58a67047463e3d184b4d6d409ec472.webp\" alt=\"展厅长廊，瓷砖样板墙与地面通铺的完整动线\" width=\"720\" height=\"960\"/><span class=\"ds-gallery-zoom\" aria-hidden=\"true\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3M11 8v6M8 11h6\"/></svg></span></button><div class=\"ds-gallery-caption\"><h3>展厅长廊</h3><p>展厅</p></div></article>",
+      "css": ".ds-gallery{min-width:0;width:100%;max-width:400px;color:var(--color-ink,#f5f5f5);font-family:\"Microsoft YaHei\",\"PingFang SC\",system-ui,sans-serif;letter-spacing:0}.ds-gallery-preview{display:block;position:relative;width:100%;aspect-ratio:4/3;border:0;padding:0;overflow:hidden;border-radius:var(--radius-md,8px);background:#141414;cursor:zoom-in}.ds-gallery-preview img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 700ms ease}.ds-gallery-preview:hover img,.ds-gallery-preview:focus-visible img{transform:scale(1.045)}.ds-gallery-preview:focus-visible{outline:2px solid #fff;outline-offset:4px}.ds-gallery-zoom{position:absolute;right:16px;bottom:16px;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;opacity:0;transition:opacity 250ms ease}.ds-gallery-preview:hover .ds-gallery-zoom,.ds-gallery-preview:focus-visible .ds-gallery-zoom{opacity:1}.ds-gallery-caption{padding-top:12px}.ds-gallery-caption h3{font-size:17px;font-weight:500;margin:0 0 6px}.ds-gallery-caption p{font-size:13px;color:var(--color-muted,#b4b5b7);margin:0}@media(prefers-reduced-motion:reduce){.ds-gallery-preview img,.ds-gallery-zoom{transition:none}.ds-gallery-preview:hover img,.ds-gallery-preview:focus-visible img{transform:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "真实瓷砖展厅",
+    "overview": "让瓷砖的纹理、光泽和铺贴现场成为视觉主角。近黑底色与白色文字退到材质之后，首屏用真实展厅长廊视频建立空间感，居中的“瓷砖生活馆 / Tile Store”直接说明品牌与品类。\n\n设计依据是根目录 `prompt.txt` 的 ZiroBuild 构图，并按 `CODE_STYLE.md` 第 9 节适配为现有 Vue 商城。首屏的透明提示条和双按钮是已确认的视觉要求；后续章节采用左对齐的统一内容网格。这里记录已实现的系统，不另设字体、配色或品牌概念。",
+    "keyCharacteristics": [
+      "真实瓷砖照片与视频承担内容，黑白控件保持克制。",
+      "居中视频首屏与左对齐章节形成明确的阅读层级。",
+      "白色主操作、透明次操作与双层文字上滚提供一致反馈。",
+      "图集、视频、3D 样片和商城各有独立职责，素材参考与商品事实明确区分。"
+    ],
+    "rules": [
+      { "name": "The Material Color Rule", "body": "新区块沿用黑白界面；材质颜色由真实照片承担，不额外加入蓝色强调色或渐变文字。", "section": "colors" },
+      { "name": "The Fixed Step Rule", "body": "字号通过固定断点切换，不随视口连续缩放。首屏依次为桌面显示字、平板（64px / 1.15）、手机（48px / 1.3）、窄屏（40px / 1.3）。章节标题在平板及普通手机为（38px），窄屏才降为（32px）。", "section": "typography" }
+    ],
+    "dos": [
+      "Do 优先使用真实瓷砖照片、样片与展厅视频，让材质成为首要视觉信号。",
+      "Do 复用黑白令牌、统一内容网格、固定断点字号与小圆角控件。",
+      "Do 为交互提供悬停、键盘焦点、选中、禁用和可读状态反馈。",
+      "Do 保留稳定媒体比例、完整灯箱预览、视频暂停与减少动态效果支持。",
+      "Do 明确标注本地图片参考、演示价格、手机号登录与支付边界，商品事实以后端为准。"
+    ],
+    "donts": [
+      "Don't 将已确认的居中视频首屏改回左文右图，或移除首屏透明提示条。",
+      "Don't 引入蓝色强调色、渐变文字、风景替代图或编造宣传数字。",
+      "Don't 用首屏显示字填充紧凑面板，或让动效改变布局和阅读顺序。",
+      "Don't 用浮动卡片包裹整章、嵌套卡片或把所有控件改成胶囊。",
+      "Don't 将 ZiroBuild 的 AI 文案、技术栈和远程素材当作瓷砖商品事实。"
+    ]
+  }
+}
